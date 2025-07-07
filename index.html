@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorateur de fichiers Trimble</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div id="app" class="h-screen flex flex-col">
+        <!-- En-tête -->
+        <header class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
+            <h1 class="text-xl font-bold">Explorateur de fichiers Trimble</h1>
+            <div class="flex items-center space-x-4">
+                <button id="dark-mode-toggle" class="p-2 rounded-full hover:bg-blue-700" title="Mode sombre">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                    </svg>
+                </button>
+                <button id="refresh-button" class="p-2 rounded-full hover:bg-blue-700" title="Actualiser">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Barre de recherche et de filtres -->
+        <div class="p-4 bg-white shadow-sm">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-grow">
+                    <input type="text" id="search-input" placeholder="Rechercher des fichiers..." 
+                           class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex space-x-2">
+                    <select id="sort-select" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="name">Nom</option>
+                        <option value="date">Date</option>
+                        <option value="size">Taille</option>
+                        <option value="type">Type</option>
+                    </select>
+                    <select id="filter-select" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">Tous</option>
+                        <option value="folders">Dossiers</option>
+                        <option value="files">Fichiers</option>
+                        <option value="models">Modèles</option>
+                        <option value="documents">Documents</option>
+                    </select>
+                </div>
+            </div>
+            <div id="breadcrumb" class="mt-2 text-sm text-gray-600">
+                <span class="cursor-pointer hover:underline" data-path="root">Racine</span>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <main class="flex-grow overflow-auto p-4">
+            <!-- État de chargement -->
+            <div id="loading-state" class="flex flex-col items-center justify-center h-full text-gray-500">
+                <svg class="animate-spin h-12 w-12 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p>Connexion à Trimble Connect...</p>
+            </div>
+
+            <!-- État d'erreur -->
+            <div id="error-state" class="hidden flex flex-col items-center justify-center h-full text-red-500">
+                <svg class="h-12 w-12 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <p id="error-message">Une erreur s'est produite</p>
+                <button id="retry-button" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    Réessayer
+                </button>
+            </div>
+
+            <!-- Liste des fichiers -->
+            <div id="files-container" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Les fichiers seront générés ici dynamiquement -->
+            </div>
+
+            <!-- Message d'absence de fichiers -->
+            <div id="empty-state" class="hidden flex flex-col items-center justify-center h-full text-gray-500">
+                <svg class="h-12 w-12 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+                </svg>
+                <p>Aucun fichier trouvé</p>
+            </div>
+        </main>
+
+        <!-- Pied de page avec pagination -->
+        <footer id="footer" class="bg-white p-4 border-t border-gray-200 hidden">
+            <div class="flex justify-between items-center">
+                <div class="text-sm text-gray-600">
+                    <span id="files-count">0</span> éléments
+                </div>
+                <div class="flex space-x-2">
+                    <button id="prev-page" class="px-3 py-1 border border-gray-300 rounded-md disabled:opacity-50">
+                        Précédent
+                    </button>
+                    <span id="pagination-info" class="px-3 py-1">Page 1 sur 1</span>
+                    <button id="next-page" class="px-3 py-1 border border-gray-300 rounded-md disabled:opacity-50">
+                        Suivant
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="file-details-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold" id="modal-title">Détails du fichier</h2>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow" id="modal-content">
+                <!-- Contenu du modal généré dynamiquement -->
+            </div>
+            <div class="p-4 border-t border-gray-200 flex justify-end">
+                <button id="download-file" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    Télécharger
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chargement des scripts -->
+    <script src="https://components.connect.trimble.com/trimble-connect-workspace-api/index.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

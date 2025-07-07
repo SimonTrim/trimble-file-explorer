@@ -1,0 +1,150 @@
+/* Styles généraux */
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #3b82f6;
+    --text-color: #1f2937;
+    --bg-color: #f3f4f6;
+    --card-bg: #ffffff;
+    --border-color: #e5e7eb;
+}
+
+/* Mode sombre */
+.dark-mode {
+    --primary-color: #3b82f6;
+    --secondary-color: #2563eb;
+    --text-color: #f3f4f6;
+    --bg-color: #1f2937;
+    --card-bg: #374151;
+    --border-color: #4b5563;
+}
+
+body.dark-mode {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.dark-mode header {
+    background-color: #1e3a8a;
+}
+
+.dark-mode .bg-white {
+    background-color: var(--card-bg);
+}
+
+.dark-mode .text-gray-600, 
+.dark-mode .text-gray-700 {
+    color: #d1d5db;
+}
+
+.dark-mode input,
+.dark-mode select {
+    background-color: #4b5563;
+    border-color: #6b7280;
+    color: #f3f4f6;
+}
+
+.dark-mode .border-gray-200,
+.dark-mode .border-gray-300 {
+    border-color: #4b5563;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Cartes de fichiers */
+.file-card {
+    transition: all 0.2s ease-in-out;
+}
+
+.file-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Icônes de fichiers */
+.file-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin-right: 12px;
+    background-color: #e5e7eb;
+}
+
+.dark-mode .file-icon {
+    background-color: #4b5563;
+}
+
+.file-icon.folder {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.file-icon.model {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.file-icon.document {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.file-icon.image {
+    background-color: #fce7f3;
+    color: #9d174d;
+}
+
+.dark-mode .file-icon.folder {
+    background-color: #78350f;
+    color: #fef3c7;
+}
+
+.dark-mode .file-icon.model {
+    background-color: #14532d;
+    color: #dcfce7;
+}
+
+.dark-mode .file-icon.document {
+    background-color: #1e3a8a;
+    color: #dbeafe;
+}
+
+.dark-mode .file-icon.image {
+    background-color: #831843;
+    color: #fce7f3;
+}
+
+/* Pagination */
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+    background-color: #475569;
+}
