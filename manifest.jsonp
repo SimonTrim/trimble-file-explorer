@@ -1,0 +1,8 @@
+callback({
+  "icon": "assets/icon.svg",
+  "title": "Explorateur de fichiers Trimble",
+  "url": "index.html",
+  "description": "Extension qui affiche la liste complète des fichiers d'un projet Trimble Connect",
+  "configCommand": "open_settings",
+  "enabled": true
+});

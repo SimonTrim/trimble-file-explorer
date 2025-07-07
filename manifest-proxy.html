@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Manifeste de l'extension Trimble</title>
+    <script>
+        // Fonction qui sera appelée par JSONP
+        function callback(data) {
+            // Convertir l'objet en chaîne JSON formatée
+            const jsonString = JSON.stringify(data, null, 2);
+            
+            // Afficher le JSON dans le conteneur
+            document.getElementById('manifest-content').textContent = jsonString;
+            
+            // Définir le type de contenu et télécharger automatiquement
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = "manifest.json";
+            document.body.appendChild(link);
+            
+            // Créer un lien pour télécharger manuellement le manifeste
+            const downloadLink = document.getElementById('download-link');
+            downloadLink.href = url;
+            downloadLink.style.display = 'inline-block';
+            
+            // Ajouter une instruction pour l'utilisateur
+            document.getElementById('instructions').style.display = 'block';
+        }
+    </script>
+</head>
+<body>
+    <h1>Manifeste de l'extension Trimble Connect</h1>
+    
+    <div id="instructions" style="display: none; margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #007bff;">
+        <h2>Instructions :</h2>
+        <p>Pour utiliser ce manifeste avec Trimble Connect :</p>
+        <ol>
+            <li>Cliquez sur le bouton "Télécharger le manifeste" ci-dessous</li>
+            <li>Hébergez le fichier téléchargé sur un serveur qui prend en charge les en-têtes CORS</li>
+            <li>Utilisez l'URL de ce fichier hébergé pour ajouter l'extension à Trimble Connect</li>
+        </ol>
+        <p><strong>Note :</strong> GitHub Pages ne prend pas en charge nativement les en-têtes CORS requis par Trimble Connect.</p>
+        <p><a href="#" id="download-link" download="manifest.json" style="display: none; padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;">Télécharger le manifeste</a></p>
+    </div>
+    
+    <h2>Contenu du manifeste :</h2>
+    <pre id="manifest-content" style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; white-space: pre-wrap;"></pre>
+    
+    <!-- Charger le fichier JSONP -->
+    <script src="manifest.jsonp"></script>
+</body>
+</html>
